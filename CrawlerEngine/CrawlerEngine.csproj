@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonCrawler.cs" />
     <Compile Include="CrawlerConfigHelper.cs" />
     <Compile Include="CrawlerBase.cs" />
     <Compile Include="CrawlerRequestConfig.cs" />

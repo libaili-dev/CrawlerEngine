@@ -17,31 +17,36 @@ namespace CrawlerEngine
         {
             this.httpWebRequest = WebRequest.Create(reqConfig.RequestUrl) as HttpWebRequest;
             ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
-
             InitWebRequest(reqConfig);
         }
 
-        public HttpWebResponse ProcessCrawl()
+        public HttpWebResponse ProcessCrawling()
         {
             throw new NotImplementedException();
         }
 
-        public Task<HttpWebResponse> ProcessCrawlAsync()
+        public Task<HttpWebResponse> ProcessCrawlingAsync()
         {
             throw new NotImplementedException();
         }
 
         public void InitWebRequest(RequestConfig reqConfig)
         {
-            
+            if(!string.IsNullOrEmpty(reqConfig.ContentType))
+            {
+                this.httpWebRequest.ContentType = reqConfig.ContentType;
+            }
 
-            //TODO
+
 
             throw new NotImplementedException();
         }
 
         public virtual void RequestConfigExt(HttpClient client)
-        { }
+        {
+
+        }
+
 
 
     }

@@ -11,8 +11,8 @@ namespace CrawlerEngine
     {
         void InitWebRequest(RequestConfig reqConfig);
 
-        HttpWebResponse ProcessCrawl();
+        HttpWebResponse ProcessCrawling();
 
-        Task<HttpWebResponse> ProcessCrawlAsync(); 
+        Task<HttpWebResponse> ProcessCrawlingAsync(); 
     }
 }

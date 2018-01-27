@@ -81,6 +81,8 @@ namespace CrawlerEngine
                             curCrawlerReqConfig.ContentType = configNode.SelectSingleNode("Request/ContentType").InnerText;
                         }
 
+                        //TODO other configuration item to be done
+
                         lstReqCfg.Add(curCrawlerReqConfig);
                     }
                 }
@@ -93,7 +95,6 @@ namespace CrawlerEngine
         {
             if (!string.IsNullOrEmpty(key))
             {
-                var tmp = lstRequestConfig.FirstOrDefault<RequestConfig>(cfg => (cfg as CrawlerRequestConfig).CrawlerKey.Equals(key, StringComparison.CurrentCultureIgnoreCase));
                 return lstRequestConfig.FirstOrDefault<RequestConfig>(cfg => (cfg as CrawlerRequestConfig).CrawlerKey.Equals(key, StringComparison.CurrentCultureIgnoreCase));
             }
             return null;
