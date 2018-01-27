@@ -23,6 +23,9 @@ namespace CrawlerEngine
 
         public int Timeout { get; set; }
 
+
+        public string ContentType { get; set; }
+
         public virtual string GetRequestUrl()
         {
             return this.requesUrl;

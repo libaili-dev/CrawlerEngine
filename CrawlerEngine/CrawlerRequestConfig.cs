@@ -12,22 +12,35 @@ namespace CrawlerEngine
 
         public Dictionary<string, string> UrlParas { get; set; }
 
+        public string Source { get; set; }
+
+        public string CrawlerKey { get; set; }
+
+        public string CrawlerDescription { get; set; }
+
         public override string GetRequestUrl()
         {
-            string requestUrlPattern = this.RequestUrlPattern.Trim();
-            if (UrlParas != null && UrlParas.Count > 0)
+            string tmpRequestUrl = this.RequestUrlPattern.Trim();
+            if (!string.IsNullOrEmpty(tmpRequestUrl))
             {
-                foreach (KeyValuePair<string, string> kvParameter in UrlParas)
+                if (UrlParas != null && UrlParas.Count > 0)
                 {
-                    // Placeholder of parameter value in the CrawlerConfig request url pattern is formatted as "{###}"
-                    string paramPlaceHolder = string.Format("{0}{1}{2}", "{", kvParameter.Key, "}");
-                    if (this.RequestUrlPattern.Contains(paramPlaceHolder))
+                    foreach (KeyValuePair<string, string> kvParameter in UrlParas)
                     {
-                        requestUrlPattern = requestUrlPattern.Replace(paramPlaceHolder, kvParameter.Value);
+                        // Placeholder of parameter value in the CrawlerConfig request url pattern is formatted as "{###}"
+                        string paramPlaceHolder = string.Format("{0}{1}{2}", "{", kvParameter.Key, "}");
+                        if (this.RequestUrlPattern.Contains(paramPlaceHolder))
+                        {
+                            tmpRequestUrl = tmpRequestUrl.Replace(paramPlaceHolder, kvParameter.Value);
+                        }
                     }
                 }
             }
-            return requestUrlPattern;
+            else
+            {
+                tmpRequestUrl = base.GetRequestUrl();
+            }
+            return tmpRequestUrl;
         }
     }
 }

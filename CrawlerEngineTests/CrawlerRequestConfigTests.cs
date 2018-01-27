@@ -23,6 +23,15 @@ namespace CrawlerEngine.Tests
             };
             crawlerReqConfig.UrlParas = dicParams;
             Assert.AreEqual(crawlerReqConfig.RequestUrl.ToString(), "https://zhidao.baidu.com/notice/get/unreadcount?iswrap=0&t=1512841098876");
+
+            RequestConfig reqConfig = crawlerReqConfig as RequestConfig;
+            Assert.AreEqual(reqConfig.RequestUrl.ToString(), "https://zhidao.baidu.com/notice/get/unreadcount?iswrap=0&t=1512841098876");
+
+            CrawlerRequestConfig crawlerTestHelper = CrawlerConfigHelper.GetCrawlerRequestConfig("CJMX") as CrawlerRequestConfig;
+            crawlerTestHelper.UrlParas = dicParams;
+            string testCrawlerUrl = crawlerTestHelper.RequestUrl;
+            Assert.AreEqual(crawlerTestHelper.RequestUrl.ToString(), "http://market.finance.sina.com.cn/downxls.php?date={date}&symbol={indicetype}{stockcode}");
+
         }
     }
 }

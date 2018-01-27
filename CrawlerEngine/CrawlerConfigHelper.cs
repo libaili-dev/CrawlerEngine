@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using System.Configuration;
 using System.Xml;
 using System.IO;
+using System.Net.Http;
 
 namespace CrawlerEngine
 {
     public static class CrawlerConfigHelper
     {
         private static string crawlerConfigFilePath = ConfigurationManager.AppSettings["CrawlerConfigFilePath"];
-        private static List<RequestConfig> lstReqConfig = new List<RequestConfig>();
+        private static List<RequestConfig> lstRequestConfig = new List<RequestConfig>();
 
 
         static CrawlerConfigHelper()
@@ -21,8 +22,17 @@ namespace CrawlerEngine
             XmlDocument xmlDoc = new XmlDocument();
             if (File.Exists(crawlerConfigFilePath))
             {
-                xmlDoc.Load(crawlerConfigFilePath);
-                //Get all the crawler configuration to the static dictionary: lstReqConfig
+                try
+                {
+                    xmlDoc.Load(crawlerConfigFilePath);
+                    //Get all the crawler configuration and save to the static dictionary: lstReqConfig
+                    ConvertCrawlerConfiguration(xmlDoc, lstRequestConfig);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
             }
             else
             {
@@ -30,14 +40,63 @@ namespace CrawlerEngine
             }
         }
 
+        private static void ConvertCrawlerConfiguration(XmlDocument xmlDoc, List<RequestConfig> lstReqCfg)
+        {
+            XmlNodeList crawlerNodes = xmlDoc.SelectNodes("//Crawlers/Crawler");
+            if (crawlerNodes != null)
+            {
+                foreach (XmlNode configNode in crawlerNodes)
+                {
+                    CrawlerRequestConfig curCrawlerReqConfig = new CrawlerRequestConfig();
+                    curCrawlerReqConfig.CrawlerKey = configNode.Attributes["key"].Value;
+                    curCrawlerReqConfig.CrawlerDescription = configNode.Attributes["description"].Value;                   
+
+                    if (!string.IsNullOrEmpty(curCrawlerReqConfig.CrawlerKey))
+                    {
+                        curCrawlerReqConfig.Source = configNode.SelectSingleNode("Request/@source").Value;
+
+                        if (configNode.SelectSingleNode("Request/Url/Address") != null)
+                        {
+                            curCrawlerReqConfig.RequestUrl = configNode.SelectSingleNode("Request/Url/Address").InnerText;
+                        }
+
+                        if (configNode.SelectSingleNode("Request/Url/Pattern") != null)
+                        {
+                            curCrawlerReqConfig.RequestUrlPattern = configNode.SelectSingleNode("Request/Url/Pattern").InnerText;
+                        }
+
+                        if (configNode.SelectSingleNode("Request/Method") != null)
+                        {
+                            string httpMethod = configNode.SelectSingleNode("Request/Method").InnerText.Trim().ToUpper();
+                            curCrawlerReqConfig.Method = new HttpMethod(httpMethod);
+                        }
+                        else
+                        {
+                            //set HttpMethod as Get
+                            curCrawlerReqConfig.Method = HttpMethod.Get;
+                        }
+
+                        if (configNode.SelectSingleNode("Request/ContentType") != null)
+                        {
+                            curCrawlerReqConfig.ContentType = configNode.SelectSingleNode("Request/ContentType").InnerText;
+                        }
+
+                        lstReqCfg.Add(curCrawlerReqConfig);
+                    }
+                }
+            }
+
+        }
+
 
         public static RequestConfig GetCrawlerRequestConfig(string key)
         {
-            RequestConfig reqConfig = new RequestConfig();
-
-
-
-            return reqConfig;
+            if (!string.IsNullOrEmpty(key))
+            {
+                var tmp = lstRequestConfig.FirstOrDefault<RequestConfig>(cfg => (cfg as CrawlerRequestConfig).CrawlerKey.Equals(key, StringComparison.CurrentCultureIgnoreCase));
+                return lstRequestConfig.FirstOrDefault<RequestConfig>(cfg => (cfg as CrawlerRequestConfig).CrawlerKey.Equals(key, StringComparison.CurrentCultureIgnoreCase));
+            }
+            return null;
         }
 
     }
