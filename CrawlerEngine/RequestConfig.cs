@@ -19,7 +19,7 @@ namespace CrawlerEngine
             }
         }
 
-        public HttpMethod Method { get; set; }
+        public string RequestMethod { get; set; }
 
         public int Timeout { get; set; }
 

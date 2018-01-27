@@ -49,7 +49,7 @@ namespace CrawlerEngine
                 {
                     CrawlerRequestConfig curCrawlerReqConfig = new CrawlerRequestConfig();
                     curCrawlerReqConfig.CrawlerKey = configNode.Attributes["key"].Value;
-                    curCrawlerReqConfig.CrawlerDescription = configNode.Attributes["description"].Value;                   
+                    curCrawlerReqConfig.CrawlerDescription = configNode.Attributes["description"].Value;
 
                     if (!string.IsNullOrEmpty(curCrawlerReqConfig.CrawlerKey))
                     {
@@ -65,15 +65,14 @@ namespace CrawlerEngine
                             curCrawlerReqConfig.RequestUrlPattern = configNode.SelectSingleNode("Request/Url/Pattern").InnerText;
                         }
 
-                        if (configNode.SelectSingleNode("Request/Method") != null)
+                        if (configNode.SelectSingleNode("Request/Method") != null && !string.IsNullOrEmpty(configNode.SelectSingleNode("Request/Method").InnerText.Trim()))
                         {
-                            string httpMethod = configNode.SelectSingleNode("Request/Method").InnerText.Trim().ToUpper();
-                            curCrawlerReqConfig.Method = new HttpMethod(httpMethod);
+                            curCrawlerReqConfig.RequestMethod = configNode.SelectSingleNode("Request/Method").InnerText.Trim().ToUpper();
                         }
                         else
                         {
                             //set HttpMethod as Get
-                            curCrawlerReqConfig.Method = HttpMethod.Get;
+                            curCrawlerReqConfig.RequestMethod = HttpMethod.Get.ToString().ToUpper();
                         }
 
                         if (configNode.SelectSingleNode("Request/ContentType") != null)

@@ -56,6 +56,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="CommonCrawlerTests.cs" />
     <Compile Include="CrawlerRequestConfigTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestConfigTests.cs" />

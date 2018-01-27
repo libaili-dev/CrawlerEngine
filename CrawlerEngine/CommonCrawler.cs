@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,12 +9,18 @@ namespace CrawlerEngine
 {
     public class CommonCrawler : CrawlerBase
     {
-        private static CrawlerRequestConfig reqConfig;
+        //public CommonCrawler(string crawlerKey)
 
-        public CommonCrawler(string crawlerKey) : base(reqConfig)
+        public CommonCrawler(string crawlerKey, Dictionary<String, String> dicParameters = null)
         {
-            reqConfig = CrawlerConfigHelper.GetCrawlerRequestConfig(crawlerKey) as CrawlerRequestConfig;
+            CrawlerRequestConfig reqConfig = CrawlerConfigHelper.GetCrawlerRequestConfig(crawlerKey) as CrawlerRequestConfig;
+            reqConfig.UrlParas = dicParameters;
+
+            this.requestClient = WebRequest.Create(reqConfig.RequestUrl) as HttpWebRequest;
+            ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
+            InitWebRequest(reqConfig);
         }
+
 
 
     }

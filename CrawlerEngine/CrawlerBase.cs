@@ -10,23 +10,17 @@ namespace CrawlerEngine
 {
     public abstract class CrawlerBase : ICrawler
     {
-        private HttpWebRequest httpWebRequest;
-
-
-        public CrawlerBase(RequestConfig reqConfig)
-        {
-            this.httpWebRequest = WebRequest.Create(reqConfig.RequestUrl) as HttpWebRequest;
-            ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
-            InitWebRequest(reqConfig);
-        }
+        protected HttpWebRequest requestClient;
 
         public HttpWebResponse ProcessCrawling()
         {
+            //TODO
             throw new NotImplementedException();
         }
 
         public Task<HttpWebResponse> ProcessCrawlingAsync()
         {
+            //TODO
             throw new NotImplementedException();
         }
 
@@ -34,12 +28,12 @@ namespace CrawlerEngine
         {
             if(!string.IsNullOrEmpty(reqConfig.ContentType))
             {
-                this.httpWebRequest.ContentType = reqConfig.ContentType;
+                this.requestClient.ContentType = reqConfig.ContentType;
             }
+            this.requestClient.Method = reqConfig.RequestMethod;
+            //TODO
 
-
-
-            throw new NotImplementedException();
+           
         }
 
         public virtual void RequestConfigExt(HttpClient client)
