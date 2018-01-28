@@ -15,12 +15,18 @@ namespace CrawlerEngine
         {
             CrawlerRequestConfig reqConfig = CrawlerConfigHelper.GetCrawlerRequestConfig(crawlerKey) as CrawlerRequestConfig;
             reqConfig.UrlParas = dicParameters;
+            //CrawlerRequestConfig here is to store the request configuration and it is set as readonly in case of invaild modification.
+            CrawlerRequestConfig = reqConfig;
 
-            this.requestClient = WebRequest.Create(reqConfig.RequestUrl) as HttpWebRequest;
+            // convert webRequest in CrawlerBase to be HttpWebRequest type
+            this.webRequest = WebRequest.Create(reqConfig.RequestUrl) as HttpWebRequest;
+            //unlock the limitation of http request connection counts
             ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
+
+            //Initialize the WebRequest Client using reqConfig(request configuration items)
             InitWebRequest(reqConfig);
 
-            CrawlerRequestConfig = reqConfig;
+
         }
 
 

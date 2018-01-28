@@ -10,21 +10,19 @@ namespace CrawlerEngine
 {
     public abstract class CrawlerBase : ICrawler
     {
-        protected HttpWebRequest requestClient;
+        protected WebRequest webRequest;
 
         public WebResponse ProcessCrawling()
         {
-            //TODO
             HttpWebResponse response = null;
-            if (requestClient != null)
+            if (webRequest != null)
             {
                 try
                 {
-                    response = requestClient.GetResponse() as HttpWebResponse;
+                    response = webRequest.GetResponse() as HttpWebResponse;
                 }
                 catch (Exception ex)
                 {
-
                     throw ex;
                 }
             }
@@ -37,13 +35,12 @@ namespace CrawlerEngine
 
         public async Task<WebResponse> ProcessCrawlingAsync()
         {
-            //TODO
             Task<WebResponse> responseTask = null;
-            if (requestClient != null)
+            if (webRequest != null)
             {
                 try
                 {
-                    responseTask = requestClient.GetResponseAsync() ;
+                    responseTask = webRequest.GetResponseAsync() ;
                     //Do other work not related to responseTask
 
                 }
@@ -63,11 +60,14 @@ namespace CrawlerEngine
         {
             if(!string.IsNullOrEmpty(reqConfig.ContentType))
             {
-                this.requestClient.ContentType = reqConfig.ContentType;
+                this.webRequest.ContentType = reqConfig.ContentType;
             }
-            this.requestClient.Method = reqConfig.RequestMethod;
-            //TODO
-
+            this.webRequest.Method = reqConfig.RequestMethod;
+            if (reqConfig.Timeout > 0)
+            {
+                this.webRequest.Timeout = reqConfig.Timeout;
+            }
+           
            
         }
 
