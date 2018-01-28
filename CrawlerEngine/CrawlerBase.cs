@@ -21,9 +21,22 @@ namespace CrawlerEngine
                 try
                 {
                     HttpWebResponse webResponse = webRequest.GetResponse() as HttpWebResponse;
+
+                    HttpStatusCode statusCode = webResponse.StatusCode;
+                    string responseContentEncoding = webResponse.ContentEncoding;
+                    long responseContentLength = webResponse.ContentLength;
+
+
+                    // Response ContextType
+                    string responseContentType = webResponse.ContentType;
+
                     //TODO
-                    //get stream fro webResponse
+                    //get stream from webResponse
                     responseStream = webResponse.GetResponseStream();
+
+
+
+
                     //important! close webResponse
                     webResponse.Close();
                 }
@@ -80,10 +93,11 @@ namespace CrawlerEngine
         }
 
 
-        public object GetResponseContext(WebResponse webResponse)
+        public object GetResponseConteNt(Stream responseStream, string contentType)
         {
-            object responseContext = null;
-            switch (webResponse.ContentType)
+            object responseContent = null;
+            // TODO 
+            switch (contentType)
             {
                 case "text/html":
 
@@ -96,10 +110,10 @@ namespace CrawlerEngine
                     break;
                 default:
                     //unusual context type of response 
-                    responseContext = GetResponseContextExt(webResponse);
+
                     break;
             }
-            return responseContext;
+            return responseContent;
         }
 
         public virtual object GetResponseContextExt(WebResponse webResponse)
