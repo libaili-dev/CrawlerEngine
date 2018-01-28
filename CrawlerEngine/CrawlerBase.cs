@@ -12,16 +12,51 @@ namespace CrawlerEngine
     {
         protected HttpWebRequest requestClient;
 
-        public HttpWebResponse ProcessCrawling()
+        public WebResponse ProcessCrawling()
         {
             //TODO
-            throw new NotImplementedException();
+            HttpWebResponse response = null;
+            if (requestClient != null)
+            {
+                try
+                {
+                    response = requestClient.GetResponse() as HttpWebResponse;
+                }
+                catch (Exception ex)
+                {
+
+                    throw ex;
+                }
+            }
+            else
+            {
+                throw new HttpRequestException("Web Request is not initialized.");
+            }
+            return response;
         }
 
-        public Task<HttpWebResponse> ProcessCrawlingAsync()
+        public async Task<WebResponse> ProcessCrawlingAsync()
         {
             //TODO
-            throw new NotImplementedException();
+            Task<WebResponse> responseTask = null;
+            if (requestClient != null)
+            {
+                try
+                {
+                    responseTask = requestClient.GetResponseAsync() ;
+                    //Do other work not related to responseTask
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            else
+            {
+                throw new HttpRequestException("Web Request is not initialized.");
+            }
+            return (await responseTask as HttpWebResponse);
         }
 
         public void InitWebRequest(RequestConfig reqConfig)

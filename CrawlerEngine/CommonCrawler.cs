@@ -9,8 +9,8 @@ namespace CrawlerEngine
 {
     public class CommonCrawler : CrawlerBase
     {
-        //public CommonCrawler(string crawlerKey)
-
+        public CrawlerRequestConfig CrawlerRequestConfig { get; }
+        
         public CommonCrawler(string crawlerKey, Dictionary<String, String> dicParameters = null)
         {
             CrawlerRequestConfig reqConfig = CrawlerConfigHelper.GetCrawlerRequestConfig(crawlerKey) as CrawlerRequestConfig;
@@ -19,6 +19,8 @@ namespace CrawlerEngine
             this.requestClient = WebRequest.Create(reqConfig.RequestUrl) as HttpWebRequest;
             ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
             InitWebRequest(reqConfig);
+
+            CrawlerRequestConfig = reqConfig;
         }
 
 
