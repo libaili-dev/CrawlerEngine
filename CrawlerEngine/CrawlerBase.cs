@@ -40,9 +40,8 @@ namespace CrawlerEngine
             {
                 try
                 {
-                    responseTask = webRequest.GetResponseAsync() ;
-                    //Do other work not related to responseTask
-
+                    responseTask = webRequest.GetResponseAsync();
+                    // other logic which is not related to responseTask will continue
                 }
                 catch (Exception ex)
                 {
@@ -58,7 +57,7 @@ namespace CrawlerEngine
 
         public void InitWebRequest(RequestConfig reqConfig)
         {
-            if(!string.IsNullOrEmpty(reqConfig.ContentType))
+            if (!string.IsNullOrEmpty(reqConfig.ContentType))
             {
                 this.webRequest.ContentType = reqConfig.ContentType;
             }
@@ -67,8 +66,8 @@ namespace CrawlerEngine
             {
                 this.webRequest.Timeout = reqConfig.Timeout;
             }
-           
-           
+            // TODO other request configuration setting
+
         }
 
         public virtual void RequestConfigExt(HttpClient client)
