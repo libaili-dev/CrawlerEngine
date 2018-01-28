@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -12,14 +13,19 @@ namespace CrawlerEngine
     {
         protected WebRequest webRequest;
 
-        public WebResponse ProcessCrawling()
+        public Stream ProcessCrawling()
         {
-            HttpWebResponse response = null;
+            Stream responseStream = null;
             if (webRequest != null)
             {
                 try
                 {
-                    response = webRequest.GetResponse() as HttpWebResponse;
+                    HttpWebResponse webResponse = webRequest.GetResponse() as HttpWebResponse;
+                    //TODO
+                    //get stream fro webResponse
+                    responseStream = webResponse.GetResponseStream();
+                    //important! close webResponse
+                    webResponse.Close();
                 }
                 catch (Exception ex)
                 {
@@ -30,18 +36,21 @@ namespace CrawlerEngine
             {
                 throw new HttpRequestException("Web Request is not initialized.");
             }
-            return response;
+            return responseStream;
         }
 
-        public async Task<WebResponse> ProcessCrawlingAsync()
+        public async Task<Stream> ProcessCrawlingAsync()
         {
-            Task<WebResponse> responseTask = null;
+            Stream responseStream = null;
             if (webRequest != null)
             {
                 try
                 {
-                    responseTask = webRequest.GetResponseAsync();
+                    Task<WebResponse> responseTask = webRequest.GetResponseAsync();
                     // other logic which is not related to responseTask will continue
+
+
+                    responseStream = (await responseTask).GetResponseStream();
                 }
                 catch (Exception ex)
                 {
@@ -52,7 +61,7 @@ namespace CrawlerEngine
             {
                 throw new HttpRequestException("Web Request is not initialized.");
             }
-            return (await responseTask as HttpWebResponse);
+            return responseStream;
         }
 
         public void InitWebRequest(RequestConfig reqConfig)
@@ -70,12 +79,33 @@ namespace CrawlerEngine
 
         }
 
-        public virtual void RequestConfigExt(HttpClient client)
-        {
 
+        public object GetResponseContext(WebResponse webResponse)
+        {
+            object responseContext = null;
+            switch (webResponse.ContentType)
+            {
+                case "text/html":
+
+                    break;
+                case "text/json":
+
+                    break;
+                case "text/xml":
+
+                    break;
+                default:
+                    //unusual context type of response 
+                    responseContext = GetResponseContextExt(webResponse);
+                    break;
+            }
+            return responseContext;
         }
 
-
-
+        public virtual object GetResponseContextExt(WebResponse webResponse)
+        {
+            return new NotImplementedException(String.Format("Context type of response is {0} which is not handled now, " +
+                "you should implement it by override the method GetResponseContextExt", webResponse.ContentType));
+        }
     }
 }

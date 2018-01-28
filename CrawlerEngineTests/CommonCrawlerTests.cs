@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
+using System.IO;
 
 namespace CrawlerEngine.Tests
 {
@@ -29,18 +30,24 @@ namespace CrawlerEngine.Tests
             Assert.IsNotNull(commonCrawler2);
 
 
-            var result = commonCrawler.ProcessCrawling() as HttpWebResponse;
-            var resultCode = result.StatusCode;
-            Assert.AreEqual(resultCode, HttpStatusCode.OK);
+            var result = commonCrawler.ProcessCrawling();
+            Assert.IsNotNull(result);
 
             for (int i = 0; i < 10; i++)
             {
-                Task<WebResponse> resultAsync = commonCrawler.ProcessCrawlingAsync();
+                Task<Stream> resultAsync = commonCrawler.ProcessCrawlingAsync();
                 Console.WriteLine(string.Format("current loop number:{1}, Crawling:{0} , ", commonCrawler.CrawlerRequestConfig.RequestUrl, i.ToString()));
                 var ret = await resultAsync;
                 Console.WriteLine(string.Format("current loop number:{1}, Crawling:{0} , ", commonCrawler.CrawlerRequestConfig.RequestUrl, i.ToString()));
-                var statusCode = (ret as HttpWebResponse).StatusCode;
-                Console.WriteLine("Status Code :{0}", statusCode);
+                if (ret != null)
+                {
+                    Console.WriteLine(string.Format("current loop number:{0}, Response is not Null.", i.ToString()));
+                }
+                else
+                {
+                    Console.WriteLine(string.Format("current loop number:{0}, Response is Null.", i.ToString()));
+
+                }
             }
         }
     }
