@@ -16,29 +16,30 @@ namespace CrawlerEngine
         public Stream ProcessCrawling()
         {
             Stream responseStream = null;
+            StreamReader streamReader = null;
             if (webRequest != null)
             {
                 try
                 {
-                    HttpWebResponse webResponse = webRequest.GetResponse() as HttpWebResponse;
 
-                    HttpStatusCode statusCode = webResponse.StatusCode;
-                    string responseContentEncoding = webResponse.ContentEncoding;
-                    long responseContentLength = webResponse.ContentLength;
-
-
-                    // Response ContextType
-                    string responseContentType = webResponse.ContentType;
-
-                    //TODO
-                    //get stream from webResponse
-                    responseStream = webResponse.GetResponseStream();
+                    using (HttpWebResponse webResponse = webRequest.GetResponse() as HttpWebResponse)
+                    {
+                        HttpStatusCode statusCode = webResponse.StatusCode;
+                        string responseContentEncoding = webResponse.ContentEncoding;
+                        long responseContentLength = webResponse.ContentLength;
 
 
+                        // Response ContextType
+                        string responseContentType = webResponse.ContentType;
 
+                        //TODO
+                        //get stream from webResponse
+                        responseStream = webResponse.GetResponseStream();
 
-                    //important! close webResponse
-                    webResponse.Close();
+                        streamReader = new StreamReader(responseStream);
+                        //important! close webResponse
+                        //webResponse.Close();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -49,7 +50,7 @@ namespace CrawlerEngine
             {
                 throw new HttpRequestException("Web Request is not initialized.");
             }
-            return responseStream;
+            return null;
         }
 
         public async Task<Stream> ProcessCrawlingAsync()
@@ -64,6 +65,7 @@ namespace CrawlerEngine
 
 
                     responseStream = (await responseTask).GetResponseStream();
+
                 }
                 catch (Exception ex)
                 {
