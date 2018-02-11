@@ -38,13 +38,16 @@ namespace CrawlerEngine.TestConsole
 
             for (int i = 0; i < 1000; i++)
             {
-                Task<Stream> resultAsync = commonCrawler.ProcessCrawlingAsync();
-                Console.WriteLine(string.Format("current loop number:{1}, Crawling:{0} , ", commonCrawler.CrawlerRequestConfig.RequestUrl, i.ToString()));
-                var ret = await resultAsync;
-                Console.WriteLine(string.Format("current loop number:{1}, Crawling:{0} , ", commonCrawler.CrawlerRequestConfig.RequestUrl, i.ToString()));
+                CommonCrawler loopCrawler = new CommonCrawler("CJMX", dicParams);
+
+                Task<Stream> resultAsync = loopCrawler.ProcessCrawlingAsync();
+                Console.WriteLine(string.Format("current loop number:{1}, Crawling:{0} , ", loopCrawler.CrawlerRequestConfig.RequestUrl, i.ToString()));
+                var ret =  resultAsync.Result;
+                Console.WriteLine(string.Format("current loop number:{1}, Crawling:{0} , ", loopCrawler.CrawlerRequestConfig.RequestUrl, i.ToString()));
                 if (ret != null)
                 {
                     Console.WriteLine(string.Format("current loop number:{0}, Response is NOT Null. ", i.ToString()));
+                    Console.WriteLine(commonCrawler.GetResponseContent(ret as Stream, "text/html").ToString());
                 }
                 else
                 {

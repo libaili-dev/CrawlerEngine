@@ -6,40 +6,34 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace CrawlerEngine
 {
     public abstract class CrawlerBase : ICrawler
     {
-        protected WebRequest webRequest;
+        protected WebRequest webRequest;        
 
         public Stream ProcessCrawling()
         {
             Stream responseStream = null;
-            StreamReader streamReader = null;
             if (webRequest != null)
             {
                 try
                 {
+                    HttpWebResponse webResponse = webRequest.GetResponse() as HttpWebResponse;
+                    HttpStatusCode statusCode = webResponse.StatusCode;
+                    string responseContentEncoding = webResponse.ContentEncoding;
+                    long responseContentLength = webResponse.ContentLength;
+                    // Response ContextType
+                    string responseContentType = webResponse.ContentType;
+                    //TODO
+                    //get stream from webResponse
+                    responseStream = webResponse.GetResponseStream();
 
-                    using (HttpWebResponse webResponse = webRequest.GetResponse() as HttpWebResponse)
-                    {
-                        HttpStatusCode statusCode = webResponse.StatusCode;
-                        string responseContentEncoding = webResponse.ContentEncoding;
-                        long responseContentLength = webResponse.ContentLength;
+                    //important! close webResponse
+                    //leave the caller to call the method CloseResponseStream() to close the responseStream here
 
-
-                        // Response ContextType
-                        string responseContentType = webResponse.ContentType;
-
-                        //TODO
-                        //get stream from webResponse
-                        responseStream = webResponse.GetResponseStream();
-
-                        streamReader = new StreamReader(responseStream);
-                        //important! close webResponse
-                        //webResponse.Close();
-                    }
                 }
                 catch (Exception ex)
                 {
@@ -50,12 +44,14 @@ namespace CrawlerEngine
             {
                 throw new HttpRequestException("Web Request is not initialized.");
             }
-            return null;
+            return responseStream;
         }
+
 
         public async Task<Stream> ProcessCrawlingAsync()
         {
             Stream responseStream = null;
+
             if (webRequest != null)
             {
                 try
@@ -65,7 +61,6 @@ namespace CrawlerEngine
 
 
                     responseStream = (await responseTask).GetResponseStream();
-
                 }
                 catch (Exception ex)
                 {
@@ -95,25 +90,30 @@ namespace CrawlerEngine
         }
 
 
-        public object GetResponseConteNt(Stream responseStream, string contentType)
+        public object GetResponseContent(Stream responseStream, string contentType)
         {
             object responseContent = null;
             // TODO 
-            switch (contentType)
+            using (StreamReader sr = new StreamReader(responseStream))
             {
-                case "text/html":
-
-                    break;
-                case "text/json":
-
-                    break;
-                case "text/xml":
-
-                    break;
-                default:
-                    //unusual context type of response 
-
-                    break;
+                switch (contentType)
+                {
+                    case "text/html":
+                    case "text/json":
+                        {
+                            string strContent = sr.ReadToEnd();
+                            responseContent = strContent;
+                        }
+                        break;
+                    case "text/xml":
+                        XmlDocument xmlDoc = new XmlDocument();
+                        xmlDoc.LoadXml(sr.ReadToEnd());
+                        responseContent = xmlDoc;
+                        break;
+                    default:
+                        //unusual context type of response 
+                        throw new NotSupportedException(string.Format("Resonse content with {0} type is not supported now!", contentType));
+                }
             }
             return responseContent;
         }
